@@ -1,0 +1,28 @@
+/* Custom Scrollbars & Mobile Optimizations */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #09090b;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #27272a;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #3f3f46;
+}
+
+/* Touch feedback for mobile buttons */
+button:active {
+    transform: scale(0.98);
+}
+
+.tab-btn.active {
+    border-color: #dc2626;
+    color: #ef4444;
+}
