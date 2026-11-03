@@ -200,6 +200,76 @@ const gameState = {
         autoSaveIntervalMinutes: 5,
         textSpeed: 'Fast'
     }
+    // Add to gameState:
+    currentSectorId: 'alexandria_core',
+    mapNodes: {
+        'alexandria_core': {
+            id: 'alexandria_core',
+            name: 'Alexandria Safe-Zone',
+            region: 'virginia_alexandria',
+            hazardLevel: 'Low',
+            threatType: 'None (Safe Zone)',
+            lootTier: 'Standard',
+            connectedTo: ['virginia_woods', 'ashei_suburbs'],
+            coords: { x: 20, y: 50 },
+            description: 'The fortified walls of Alexandria. Your home base.'
+        },
+        'virginia_woods': {
+            id: 'virginia_woods',
+            name: 'Whisperer Territory Woods',
+            region: 'virginia_alexandria',
+            hazardLevel: 'Medium',
+            threatType: 'Walker Herds & Lurkers',
+            lootTier: 'Uncommon',
+            connectedTo: ['alexandria_core', 'crm_outpost_alpha'],
+            coords: { x: 40, y: 35 },
+            description: 'Dense forest canopy once controlled by the Whisperers.'
+        },
+        'ashei_suburbs': {
+            id: 'ashei_suburbs',
+            name: 'Ruined Suburbs',
+            region: 'virginia_alexandria',
+            hazardLevel: 'Medium',
+            threatType: 'Scavenger Ambushes',
+            lootTier: 'Uncommon',
+            connectedTo: ['alexandria_core', 'manhattan_transit_hub'],
+            coords: { x: 45, y: 65 },
+            description: 'Looted residential neighborhoods filled with scrap and canned goods.'
+        },
+        'crm_outpost_alpha': {
+            id: 'crm_outpost_alpha',
+            name: 'CRM Transit Hub Alpha',
+            region: 'crm_redoubt_alpha',
+            hazardLevel: 'High',
+            threatType: 'CRM Heavy Troops & Sentry Drones',
+            lootTier: 'Military High-Tech',
+            connectedTo: ['virginia_woods'],
+            coords: { x: 70, y: 30 },
+            description: 'Restricted Civic Republic Military landing pad and research bunker.'
+        },
+        'manhattan_transit_hub': {
+            id: 'manhattan_transit_hub',
+            name: 'Lower Manhattan Skyscraper Ruins',
+            region: 'manhattan_dead_city',
+            hazardLevel: 'Extreme',
+            threatType: 'Burazi Cartel & Acidic Walkers',
+            lootTier: 'Rare Exotic',
+            connectedTo: ['ashei_suburbs', 'paris_catacombs'],
+            coords: { x: 80, y: 75 },
+            description: 'The vertical wasteland of Dead City. Methane gas leaks and high-rise swarms.'
+        },
+        'paris_catacombs': {
+            id: 'paris_catacombs',
+            name: 'Parisian Underground Catacombs',
+            region: 'france_paris_union',
+            hazardLevel: 'Nightmare',
+            threatType: 'Pouvoir Super-Variant Walkers',
+            lootTier: 'Prototype Bio-Tech',
+            connectedTo: ['manhattan_transit_hub'],
+            coords: { x: 95, y: 85 },
+            description: 'Subterranean tunnels holding Genet\'s mutated variant test subjects.'
+        }
+    },
 };
 // ============================================================================
 // INITIALIZATION, EVENT LISTENERS & APP CONTROLLER
@@ -1782,4 +1852,101 @@ function importSaveData(jsonString) {
         alert("Failed to import save file: Invalid data format.");
         console.error(e);
     }
+    // ============================================================================
+// PHASE 1: DYNAMIC MAP & SECTOR EXPLORATION ENGINE
+// ============================================================================
+
+function renderMap() {
+    let mapContainer = document.getElementById('map-node-grid');
+    if (!mapContainer) return;
+
+    mapContainer.innerHTML = '';
+    const currentSector = gameState.mapNodes[gameState.currentSectorId];
+
+    // Sector Info Card Header
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'col-span-full bg-zinc-950 p-3 rounded border border-zinc-800 mb-3';
+    headerDiv.innerHTML = `
+        <div class="flex justify-between items-start">
+            <div>
+                <h3 class="font-bold text-red-500 text-sm uppercase tracking-wider">${currentSector.name}</h3>
+                <p class="text-xs text-zinc-400 mt-0.5">${currentSector.description}</p>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-1 rounded border ${
+                currentSector.hazardLevel === 'Low' ? 'bg-emerald-950 text-emerald-400 border-emerald-800' :
+                currentSector.hazardLevel === 'Medium' ? 'bg-amber-950 text-amber-400 border-amber-800' :
+                'bg-red-950 text-red-400 border-red-800 animate-pulse'
+            }">Hazard: ${currentSector.hazardLevel}</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-2 text-[11px] text-zinc-400 border-t border-zinc-900 pt-2">
+            <span>Primary Threat: <strong class="text-zinc-200">${currentSector.threatType}</strong></span>
+            <span>Loot Quality: <strong class="text-emerald-400">${currentSector.lootTier}</strong></span>
+        </div>
+    `;
+    mapContainer.appendChild(headerDiv);
+
+    // Connected Sector Nodes
+    const label = document.createElement('h4');
+    label.className = 'col-span-full text-xs font-bold uppercase text-zinc-400 mb-1';
+    label.innerText = 'Navigational Sector Connections:';
+    mapContainer.appendChild(label);
+
+    Object.values(gameState.mapNodes).forEach(node => {
+        const isCurrent = node.id === gameState.currentSectorId;
+        const isConnected = currentSector.connectedTo.includes(node.id);
+
+        const nodeBtn = document.createElement('div');
+        nodeBtn.className = `p-3 rounded border transition-all flex flex-col justify-between text-xs ${
+            isCurrent ? 'bg-red-950/40 border-red-600 shadow-lg ring-1 ring-red-600' :
+            isConnected ? 'bg-zinc-950 border-zinc-700 hover:border-zinc-500 cursor-pointer' :
+            'bg-zinc-950/40 border-zinc-900 opacity-40 cursor-not-allowed'
+        }`;
+
+        nodeBtn.innerHTML = `
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold ${isCurrent ? 'text-red-400' : 'text-zinc-200'}">${node.name}</span>
+                    ${isCurrent ? '<span class="text-[9px] bg-red-900 text-red-200 px-1.5 py-0.5 rounded font-mono">LOCATION</span>' : ''}
+                </div>
+                <span class="text-[10px] text-zinc-500 block truncate">${node.threatType}</span>
+            </div>
+            ${isConnected ? `
+                <button onclick="travelToSector('${node.id}')" class="mt-2.5 w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 py-1.5 rounded text-[10px] font-semibold border border-zinc-700 transition-colors flex items-center justify-center gap-1">
+                    🗺️ Travel (-15 Stamina, +1 Hr)
+                </button>
+            ` : ''}
+        `;
+        mapContainer.appendChild(nodeBtn);
+    });
+}
+
+function travelToSector(targetSectorId) {
+    if (gameState.player.stamina < 15) {
+        showToast("⚠️ Too physically exhausted to travel between sectors!", "warning");
+        return;
+    }
+
+    const targetNode = gameState.mapNodes[targetSectorId];
+    if (!targetNode) return;
+
+    gameState.player.stamina -= 15;
+    gameState.currentSectorId = targetSectorId;
+    gameState.currentRegion = targetNode.region;
+    gameState.hour = (gameState.hour + 1) % 24;
+
+    logEvent(`[SECTOR TRAVEL] Traveled to ${targetNode.name}. Region updated to ${targetNode.region.replace(/_/g, ' ').toUpperCase()}.`);
+    showToast(`Arrived at ${targetNode.name}`, "success");
+
+    // Hazard Ambush Check based on sector hazard level
+    const ambushRoll = Math.random();
+    if (targetNode.hazardLevel === 'High' && ambushRoll < 0.45) {
+        logEvent(`[AMBUSH!] Ambushed upon arrival at ${targetNode.name}!`);
+        startCombat("Sector Sentry Ambush", 85, 30, "crm_trooper");
+    } else if (targetNode.hazardLevel === 'Nightmare' && ambushRoll < 0.70) {
+        logEvent(`[NIGHTMARE AMBUSH!] Mutated French variant walkers lunged from the shadows!`);
+        startCombat("Pouvoir Mutated Super-Variant", 120, 45, "variant_burner");
+    }
+
+    renderAll();
+    renderMap();
 }
