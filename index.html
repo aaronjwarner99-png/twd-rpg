@@ -20,21 +20,23 @@
             <p id="day-counter" class="text-xs text-zinc-400">Day 1 • 08:00 AM • Clear Sky</p>
         </div>
         <div class="flex gap-2">
-            <button id="save-btn" class="bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 px-3 py-1.5 rounded border border-zinc-700">Save</button>
-            <button id="reset-btn" class="bg-red-950 hover:bg-red-900 text-xs text-red-300 px-3 py-1.5 rounded border border-red-800">Reset</button>
+            <button id="save-btn" class="bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 px-3 py-1.5 rounded border border-zinc-700 transition-colors">Save</button>
+            <button id="export-save-btn" class="bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 px-3 py-1.5 rounded border border-zinc-700 transition-colors hidden sm:inline-block">Export</button>
+            <button id="reset-btn" class="bg-red-950 hover:bg-red-900 text-xs text-red-300 px-3 py-1.5 rounded border border-red-800 transition-colors">Reset</button>
         </div>
     </header>
 
     <!-- Main Game Container -->
     <main class="flex-1 max-w-6xl w-full mx-auto p-4 grid grid-cols-1 md:grid-cols-12 gap-4 pb-20 md:pb-6">
 
-        <!-- Left Column: Core Survival & Diagnostics (4 Cols) -->
+        <!-- Left Column: Core Survival, Diagnostics & Secondary Vitals (4 Cols) -->
         <section class="md:col-span-4 space-y-4">
-            <!-- Vitals Panel -->
-            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 space-y-3">
+            
+            <!-- Primary Vitals Panel -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 space-y-3 shadow-md">
                 <h2 class="text-xs font-bold uppercase text-zinc-400 tracking-wider">Survivor Vitals</h2>
                 
-                <div class="space-y-2">
+                <div class="space-y-2.5">
                     <div>
                         <div class="flex justify-between text-xs mb-1">
                             <span>Health</span>
@@ -57,7 +59,7 @@
 
                     <div>
                         <div class="flex justify-between text-xs mb-1">
-                            <span>Infection Risk</span>
+                            <span>Wildfire Infection</span>
                             <span id="infection-val">0%</span>
                         </div>
                         <div class="w-full bg-zinc-800 rounded-full h-2 overflow-hidden">
@@ -77,8 +79,42 @@
                 </div>
             </div>
 
+            <!-- Secondary Physiological Gauges -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 space-y-3 shadow-md">
+                <h2 class="text-xs font-bold uppercase text-zinc-400 tracking-wider">Physiological Gauges</h2>
+                <div class="space-y-2">
+                    <div>
+                        <div class="flex justify-between text-[11px] mb-0.5 text-zinc-300">
+                            <span>Hunger Level</span>
+                            <span id="hunger-val">85 / 100</span>
+                        </div>
+                        <div class="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                            <div id="hunger-bar" class="bg-orange-500 h-full transition-all duration-300" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[11px] mb-0.5 text-zinc-300">
+                            <span>Hydration Level</span>
+                            <span id="thirst-val">90 / 100</span>
+                        </div>
+                        <div class="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                            <div id="thirst-bar" class="bg-blue-500 h-full transition-all duration-300" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[11px] mb-0.5 text-zinc-300">
+                            <span>Rest / Sleep</span>
+                            <span id="sleep-val">95 / 100</span>
+                        </div>
+                        <div class="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                            <div id="sleep-bar" class="bg-indigo-500 h-full transition-all duration-300" style="width: 95%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Body Diagnostics & Amputation Tracker -->
-            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 shadow-md">
                 <div class="flex justify-between items-center mb-3">
                     <h2 class="text-xs font-bold uppercase text-zinc-400 tracking-wider">Limb Diagnostic</h2>
                     <span id="trauma-state" class="text-xs bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800">Clear Mind</span>
@@ -92,7 +128,7 @@
         <!-- Right Column: Interactive Hub & Narrative (8 Cols) -->
         <section class="md:col-span-8 space-y-4 flex flex-col">
             <!-- Navigation Tabs -->
-            <nav class="flex border-b border-zinc-800 bg-zinc-900 rounded-t-lg overflow-x-auto text-xs">
+            <nav class="flex border-b border-zinc-800 bg-zinc-900 rounded-t-lg overflow-x-auto text-xs shadow-md">
                 <button class="tab-btn px-4 py-3 font-semibold border-b-2 border-red-600 text-red-500 active" data-tab="story">Narrative</button>
                 <button class="tab-btn px-4 py-3 font-semibold border-b-2 border-transparent text-zinc-400 hover:text-zinc-200" data-tab="combat">Combat</button>
                 <button class="tab-btn px-4 py-3 font-semibold border-b-2 border-transparent text-zinc-400 hover:text-zinc-200" data-tab="inventory">Inventory</button>
@@ -101,12 +137,12 @@
             </nav>
 
             <!-- Tab Panels -->
-            <div class="bg-zinc-900 border border-zinc-800 rounded-b-lg p-4 flex-1 flex flex-col min-h-[360px]">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-b-lg p-4 flex-1 flex flex-col min-h-[420px] shadow-md">
                 
                 <!-- Story / Log Panel -->
                 <div id="tab-story" class="tab-content flex-1 flex flex-col space-y-4">
-                    <div id="log-feed" class="flex-1 bg-zinc-950 border border-zinc-800/80 rounded p-3 overflow-y-auto space-y-2 text-sm font-mono max-h-[280px]">
-                        <p class="text-zinc-400">[SYSTEM] Initialization complete. Welcome to the wasteland.</p>
+                    <div id="log-feed" class="flex-1 bg-zinc-950 border border-zinc-800/80 rounded p-3 overflow-y-auto space-y-1.5 text-xs font-mono max-h-[320px]">
+                        <p class="text-zinc-400">[SYSTEM] Core telemetry online. Post-series wasteland telemetry initialized.</p>
                     </div>
                     <div id="action-options" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <!-- Dynamic Actions Injected via JS -->
@@ -118,28 +154,28 @@
                     <div class="flex justify-between items-center bg-zinc-950 p-3 rounded border border-zinc-800">
                         <div>
                             <span class="text-xs text-zinc-400 block">Threat Noise Level</span>
-                            <span id="noise-meter" class="text-sm font-bold text-emerald-400">Low (Quiet)</span>
+                            <span id="noise-meter" class="text-sm font-bold text-emerald-400">Low (Quiet) (15%)</span>
                         </div>
                         <div>
                             <span class="text-xs text-zinc-400 block">Enemy Contact</span>
                             <span id="enemy-status" class="text-sm font-bold text-red-500">None</span>
                         </div>
                     </div>
-                    <div id="combat-log" class="flex-1 bg-zinc-950 border border-zinc-800 rounded p-3 text-xs font-mono overflow-y-auto min-h-[160px]">
+                    <div id="combat-log" class="flex-1 bg-zinc-950 border border-zinc-800 rounded p-3 text-xs font-mono overflow-y-auto min-h-[180px] space-y-1">
                         <p class="text-zinc-500">No active encounters nearby.</p>
                     </div>
                     <div id="combat-actions" class="grid grid-cols-2 gap-2">
-                        <button class="combat-act-btn bg-zinc-800 hover:bg-zinc-700 p-2 rounded text-xs text-left" data-target="head">🎯 Headshot (High Risk)</button>
-                        <button class="combat-act-btn bg-zinc-800 hover:bg-zinc-700 p-2 rounded text-xs text-left" data-target="body">🛡️ Center Mass (Safe)</button>
-                        <button class="combat-act-btn bg-zinc-800 hover:bg-zinc-700 p-2 rounded text-xs text-left" data-target="limb">🗡️ Sever Limb (Silent)</button>
-                        <button class="combat-act-btn bg-zinc-800 hover:bg-zinc-700 p-2 rounded text-xs text-left" data-target="flee">🏃 Flee / Hide</button>
+                        <button class="combat-act-btn bg-zinc-800 hover:bg-zinc-700 p-2.5 rounded text-xs text-left transition-colors border border-zinc-700" data-target="head">🎯 Headshot (High Risk)</button>
+                        <button class="combat-act-btn bg-zinc-800 hover:bg-zinc-700 p-2.5 rounded text-xs text-left transition-colors border border-zinc-700" data-target="body">🛡️ Center Mass (Safe)</button>
+                        <button class="combat-act-btn bg-zinc-800 hover:bg-zinc-700 p-2.5 rounded text-xs text-left transition-colors border border-zinc-700" data-target="limb">🗡️ Sever Limb (Silent)</button>
+                        <button class="combat-act-btn bg-zinc-800 hover:bg-zinc-700 p-2.5 rounded text-xs text-left transition-colors border border-zinc-700" data-target="flee">🏃 Flee / Cover</button>
                     </div>
                 </div>
 
                 <!-- Inventory Panel -->
                 <div id="tab-inventory" class="tab-content hidden flex-1 flex flex-col space-y-4">
-                    <h3 class="text-xs font-bold uppercase text-zinc-400">Scavenged Supplies</h3>
-                    <div id="inventory-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <h3 class="text-xs font-bold uppercase text-zinc-400 tracking-wider">Scavenged Supplies & Backpack</h3>
+                    <div id="inventory-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                         <!-- Inventory slots generated by JS -->
                     </div>
                 </div>
@@ -147,27 +183,33 @@
                 <!-- Base Camp Panel -->
                 <div id="tab-base" class="tab-content hidden flex-1 space-y-4">
                     <div class="grid grid-cols-3 gap-2 text-center text-xs">
-                        <div class="bg-zinc-950 p-2 rounded border border-zinc-800">
+                        <div class="bg-zinc-950 p-2.5 rounded border border-zinc-800">
                             <span class="block text-zinc-500">Survivors</span>
-                            <span id="base-pop" class="font-bold text-amber-500">12</span>
+                            <span id="base-pop" class="font-bold text-amber-500 text-sm">18 / 35</span>
                         </div>
-                        <div class="bg-zinc-950 p-2 rounded border border-zinc-800">
+                        <div class="bg-zinc-950 p-2.5 rounded border border-zinc-800">
                             <span class="block text-zinc-500">Defense</span>
-                            <span id="base-def" class="font-bold text-blue-500">75%</span>
+                            <span id="base-def" class="font-bold text-blue-500 text-sm">82%</span>
                         </div>
-                        <div class="bg-zinc-950 p-2 rounded border border-zinc-800">
+                        <div class="bg-zinc-950 p-2.5 rounded border border-zinc-800">
                             <span class="block text-zinc-500">Food Rations</span>
-                            <span id="base-food" class="font-bold text-emerald-500">45 Days</span>
+                            <span id="base-food" class="font-bold text-emerald-500 text-sm">65 Days</span>
                         </div>
                     </div>
+                    
                     <div id="base-modules" class="space-y-2">
                         <!-- Facilities list -->
                     </div>
+
+                    <!-- Dynamic Companion & Tech Tree containers appended via JS -->
+                    <div id="companion-list" class="mt-4 space-y-2"></div>
+                    <div id="tech-tree-container" class="mt-4 space-y-2"></div>
+                    <div id="vehicle-garage" class="mt-4 space-y-2"></div>
                 </div>
 
                 <!-- Factions Panel -->
                 <div id="tab-factions" class="tab-content hidden flex-1 space-y-3">
-                    <h3 class="text-xs font-bold uppercase text-zinc-400">Post-Series Faction Diplomacy</h3>
+                    <h3 class="text-xs font-bold uppercase text-zinc-400 tracking-wider">Post-Series Faction Diplomacy</h3>
                     <div id="faction-list" class="space-y-2 text-xs">
                         <!-- Factions populated via JS -->
                     </div>
@@ -177,6 +219,9 @@
         </section>
 
     </main>
+
+    <!-- Floating Toast Notification Overlay Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <script src="app.js"></script>
 </body>
