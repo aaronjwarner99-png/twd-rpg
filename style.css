@@ -1,4 +1,4 @@
-/* Custom Scrollbars & Mobile Optimizations */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -22,7 +22,24 @@ button:active {
     transform: scale(0.98);
 }
 
+/* Active tab styles */
 .tab-btn.active {
     border-color: #dc2626;
     color: #ef4444;
+}
+
+/* Custom Fade-in Animation for Tab Panels */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.2s ease-out forwards;
 }
