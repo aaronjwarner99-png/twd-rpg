@@ -172,17 +172,16 @@ export function saveGame() {
 }
 
 export function loadGame() {
-    const saved = localStorage.getItem('twd_rpg_save');
-    if (!saved) return false;
     try {
+        const saved = localStorage.getItem('twd_rpg_save');
+        if (!saved) return false;
         const parsed = JSON.parse(saved);
         deepMergeObjects(gameState, parsed);
         if (gameState.player.hp <= 0) gameState.player.hp = 100;
         logEvent("[STORAGE] Save state restored successfully.");
         return true;
     } catch (e) {
-        console.error("[LOAD ERROR]", e);
-        showToast("⚠️ Save state corrupted or incompatible.", "warning");
+        console.warn("[STORAGE NOTICE] LocalStorage is restricted or unavailable. Starting fresh session.", e);
         return false;
     }
 }
