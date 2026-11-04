@@ -164,7 +164,7 @@ export function resolveCombatAction(actionType) {
 
     // Check player defeat condition
     if (gameState.player.hp <= 0) {
-        combatLog.innerHTML += `<p class="text-red-600 font-bold animate-pulse">💀 FATAL INJURY: You have succumbed to your wounds...</p>';
+        combatLog.innerHTML += `<p class="text-red-600 font-bold animate-pulse">💀 FATAL INJURY: You have succumbed to your wounds...</p>`;
         showToast("💀 You have been defeated in combat!", "warning");
         setTimeout(() => {
             alert("💀 Game Over: Your survivor perished in the wasteland.");
