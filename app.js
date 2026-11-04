@@ -34,8 +34,16 @@ function initTabs() {
     const contents = document.querySelectorAll('.tab-content');
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active', 'border-red-600', 'text-red-500'));
+            // Reset all tabs to inactive styling
+            tabs.forEach(t => {
+                t.classList.remove('active', 'border-red-600', 'text-red-500');
+                t.classList.add('border-transparent', 'text-zinc-400');
+            });
+            // Activate clicked tab
             tab.classList.add('active', 'border-red-600', 'text-red-500');
+            tab.classList.remove('border-transparent', 'text-zinc-400');
+            
+            // Hide all tab contents and show the selected one
             contents.forEach(c => c.classList.add('hidden'));
             document.getElementById(`tab-${tab.dataset.tab}`)?.classList.remove('hidden');
         });
