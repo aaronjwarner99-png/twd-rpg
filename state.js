@@ -1,8 +1,8 @@
 // ============================================================================
-// STATE STORE & PERSISTENCE ENGINE
+// STATE STORE & PERSISTENCE ENGINE (UPGRADED)
 // ============================================================================
 export const gameState = {
-    version: "3.5.0-elite",
+    version: "3.6.0-elite",
     saveTimestamp: null,
     playtimeSeconds: 0,
     day: 1,
@@ -45,11 +45,13 @@ export const gameState = {
     inventory: [
         { id: 'machete', name: 'Tactical Machete', qty: 1, type: 'weapon', durability: 95, maxDurability: 100, damage: 28, noise: 'Quiet', value: 35 },
         { id: 'suppressed_pistol', name: 'Silenced Glock 19', qty: 1, type: 'weapon', durability: 90, maxDurability: 100, damage: 45, noise: 'Low', value: 120 },
+        { id: 'assault_rifle', name: 'Colt M4A1 Carbine', qty: 1, type: 'weapon', durability: 85, maxDurability: 100, damage: 70, noise: 'Extreme', value: 200 },
         { id: 'bandage', name: 'Sterile Trauma Bandage', qty: 5, type: 'medical', effect: 'heals_bleed_30', value: 15 },
         { id: 'antibiotics', name: 'Broad-Spectrum Antibiotics', qty: 2, type: 'medical', effect: 'slows_infection_20', value: 50 },
         { id: 'water', name: 'Purified Water Flask', qty: 3, type: 'consumable', effect: 'thirst_40', value: 10 },
         { id: 'canned_beans', name: 'Canned Chili Beans', qty: 5, type: 'consumable', effect: 'hunger_35', value: 12 },
         { id: 'ammunition_9mm', name: '9mm Hollow-Point Rounds', qty: 32, type: 'ammo', value: 2 },
+        { id: 'ammunition_556', name: '5.56 NATO Rounds', qty: 40, type: 'ammo', value: 3 },
         { id: 'scrap_metal', name: 'Industrial Scrap Metal', qty: 14, type: 'material', value: 5 },
         { id: 'chemicals', name: 'Solvents & Chemicals', qty: 6, type: 'material', value: 8 },
         { id: 'fabric', name: 'Ballistic Fabric Rolls', qty: 4, type: 'material', value: 6 }
@@ -145,7 +147,7 @@ export function showToast(message, type = "info") {
     }
     const toast = document.createElement('div');
     toast.className = `px-3 py-2 rounded border text-xs font-mono shadow-xl transition-all transform translate-y-2 opacity-0 pointer-events-auto ${
-        type === 'success' ? 'bg-emerald-950 border-emerald-700 text-emerald-200' : 'bg-zinc-900 border-zinc-700 text-zinc-200'
+        type === 'success' ? 'bg-emerald-950 border-emerald-700 text-emerald-200' : type === 'warning' ? 'bg-amber-950 border-amber-700 text-amber-200' : 'bg-zinc-900 border-zinc-700 text-zinc-200'
     }`;
     toast.innerText = message;
     toastContainer.appendChild(toast);
@@ -176,10 +178,11 @@ export function loadGame() {
         const parsed = JSON.parse(saved);
         deepMergeObjects(gameState, parsed);
         if (gameState.player.hp <= 0) gameState.player.hp = 100;
-        logEvent("[STORAGE] Save state restored.");
+        logEvent("[STORAGE] Save state restored successfully.");
         return true;
     } catch (e) {
         console.error("[LOAD ERROR]", e);
+        showToast("⚠️ Save state corrupted or incompatible.", "warning");
         return false;
     }
 }
@@ -188,8 +191,9 @@ function deepMergeObjects(target, source) {
     for (const key of Object.keys(source)) {
         if (source[key] instanceof Object && key in target && target[key] instanceof Object && !Array.isArray(source[key])) {
             deepMergeObjects(target[key], source[key]);
+        } else {
+            target[key] = source[key];
         }
     }
-    Object.assign(target || {}, source);
     return target;
 }
